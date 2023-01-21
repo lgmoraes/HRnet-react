@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { Button, Input, InputNumber, Select } from 'antd'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import { Button, Input, InputNumber, Select, DatePicker } from 'antd'
 
 import { departments, states } from '../../utils/data'
 
@@ -44,12 +42,13 @@ const Modal = styled.div`
  * Root element of the app
  */
 function Home() {
-  const [startDate, setStartDate] = useState(new Date())
-  const [dateOfBirth, setDateOfBirth] = useState(new Date())
-
   useEffect(() => {
     document.title = 'HRnet'
   }, [])
+
+  const DatePickerOnChange = (date, dateString) => {
+    console.log(date, dateString)
+  }
 
   function showModal(visible) {
     const modal = document.getElementById('modal')
@@ -89,8 +88,8 @@ function Home() {
       <Title>HRnet</Title>
       <Container>
         <Link to="employee-list">View Current Employees</Link>
-
         <h2>Create Employee</h2>
+
         <Form action="#" id="create-employee">
           <Label htmlFor="first-name">First Name</Label>
           <Input id="first-name" />
@@ -99,22 +98,10 @@ function Home() {
           <Input id="last-name" />
 
           <Label htmlFor="date-of-birth">Date of Birth</Label>
-          <DatePicker
-            id="date-of-birth"
-            selected={dateOfBirth}
-            onChange={(date) => {
-              setDateOfBirth(date)
-            }}
-          />
+          <DatePicker id="date-of-birth" onChange={DatePickerOnChange} />
 
           <Label htmlFor="start-date">Start Date</Label>
-          <DatePicker
-            id="start-date"
-            selected={startDate}
-            onChange={(date) => {
-              setStartDate(date)
-            }}
-          />
+          <DatePicker id="start-date" onChange={DatePickerOnChange} />
 
           <Address>
             <legend>Address</legend>
