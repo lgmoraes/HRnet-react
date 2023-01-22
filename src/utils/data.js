@@ -1,3 +1,15 @@
+export const dataColumns = {
+  'First Name': 'firstName',
+  'Last Name': 'lastName',
+  'Start Date': 'startDate',
+  Department: 'department',
+  'Date of Birth': 'dateOfBirth',
+  Street: 'street',
+  City: 'city',
+  State: 'state',
+  'Zip Code': 'zipCode',
+}
+
 export const departments = [
   'Sales',
   'Marketing',
