@@ -18,10 +18,10 @@ const columns = Object.entries(dataColumns).map(([label, id]) => ({
   sortable: true,
 }))
 
-const mock = []
+const fakeUsers = []
 
 for (let i = 0; i < 100; i++) {
-  mock.push({
+  fakeUsers.push({
     id: faker.datatype.uuid(),
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
@@ -36,13 +36,12 @@ for (let i = 0; i < 100; i++) {
 }
 
 function EmployeeList() {
-  // const data = JSON.parse(localStorage.getItem('employees'))
-
-  console.log(mock)
+  const storedUsers = JSON.parse(localStorage.getItem('employees')) || []
+  const users = storedUsers.concat(fakeUsers)
+  console.log(storedUsers)
 
   useEffect(() => {
     document.title = 'Employee list'
-    console.log('1', columns)
   }, [])
 
   return (
@@ -54,7 +53,7 @@ function EmployeeList() {
         pagination
         striped
         columns={columns}
-        data={mock}
+        data={users}
       />
       <Link to="/">Home</Link>
     </main>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Input, InputNumber, Select, DatePicker } from 'antd'
@@ -42,13 +42,12 @@ const Modal = styled.div`
  * Root element of the app
  */
 function Home() {
+  const [state, setState] = useState()
+  const [department, setDepartment] = useState()
+
   useEffect(() => {
     document.title = 'HRnet'
   }, [])
-
-  const DatePickerOnChange = (date, dateString) => {
-    console.log(date, dateString)
-  }
 
   function showModal(visible) {
     const modal = document.getElementById('modal')
@@ -60,10 +59,8 @@ function Home() {
     const lastName = document.getElementById('last-name')
     const dateOfBirth = document.getElementById('date-of-birth')
     const startDate = document.getElementById('start-date')
-    const department = document.getElementById('department')
     const street = document.getElementById('street')
     const city = document.getElementById('city')
-    const state = document.getElementById('state')
     const zipCode = document.getElementById('zip-code')
 
     const employees = JSON.parse(localStorage.getItem('employees')) || []
@@ -72,14 +69,14 @@ function Home() {
       lastName: lastName.value,
       dateOfBirth: dateOfBirth.value,
       startDate: startDate.value,
-      department: department.value,
+      department: department,
       street: street.value,
       city: city.value,
-      state: state.value,
+      state: state,
       zipCode: zipCode.value,
     }
     employees.push(employee)
-    //localStorage.setItem('employees', JSON.stringify(employees))
+    localStorage.setItem('employees', JSON.stringify(employees))
     showModal(true)
   }
 
@@ -98,10 +95,10 @@ function Home() {
           <Input id="last-name" />
 
           <Label htmlFor="date-of-birth">Date of Birth</Label>
-          <DatePicker id="date-of-birth" onChange={DatePickerOnChange} />
+          <DatePicker id="date-of-birth" />
 
           <Label htmlFor="start-date">Start Date</Label>
-          <DatePicker id="start-date" onChange={DatePickerOnChange} />
+          <DatePicker id="start-date" />
 
           <Address>
             <legend>Address</legend>
@@ -116,7 +113,11 @@ function Home() {
             <Select
               name="state"
               id="state"
-              options={states.map((state) => ({ value: state.name }))}
+              options={states.map((state) => ({
+                label: state.name,
+                value: state.name,
+              }))}
+              onChange={(data) => setState(data)}
               style={{
                 width: 180,
               }}
@@ -131,6 +132,7 @@ function Home() {
             name="department"
             id="department"
             options={departments.map((name) => ({ value: name }))}
+            onChange={(data) => setDepartment(data)}
             style={{
               width: 160,
             }}
