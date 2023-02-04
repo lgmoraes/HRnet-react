@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Input, InputNumber, Select, DatePicker } from 'antd'
+import Modal from 'lgm-react-modal'
 
 import { departments, states } from '../../utils/data'
 
@@ -34,25 +35,17 @@ const Address = styled.fieldset`
   margin-top: 10px;
 `
 
-const Modal = styled.div`
-  display: none;
-`
-
 /**
  * Root element of the app
  */
 function Home() {
   const [state, setState] = useState()
   const [department, setDepartment] = useState()
+  const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     document.title = 'HRnet'
   }, [])
-
-  function showModal(visible) {
-    const modal = document.getElementById('modal')
-    modal.style.display = visible ? 'block' : 'none'
-  }
 
   function saveEmployee() {
     const firstName = document.getElementById('first-name')
@@ -77,7 +70,7 @@ function Home() {
     }
     employees.push(employee)
     localStorage.setItem('employees', JSON.stringify(employees))
-    showModal(true)
+    setModalOpen(true)
   }
 
   return (
@@ -144,7 +137,9 @@ function Home() {
         </Button>
       </Container>
 
-      <Modal id="modal">Employee Created!</Modal>
+      <Modal open={modalOpen} setOpen={setModalOpen}>
+        Employee Created!
+      </Modal>
     </main>
   )
 }
