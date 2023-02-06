@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useSelector, useStore } from 'react-redux'
 import DataTable from 'react-data-table-component'
 import styled from 'styled-components'
-import { faker } from '@faker-js/faker'
 import { Input } from 'antd'
+import { selectUsersData } from '../../utils/selectors'
+import { getUsers } from '../../features/users'
 
 import { dataColumns } from '../../utils/data'
 
@@ -21,42 +23,29 @@ const columns = Object.entries(dataColumns).map(([label, id]) => ({
   sortable: true,
 }))
 
-const fakeUsers = []
-
-for (let i = 0; i < 100; i++) {
-  fakeUsers.push({
-    id: faker.datatype.uuid(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    department: faker.address.county(),
-    startDate: faker.date.birthdate().toISOString().substring(0, 10),
-    dateOfBirth: faker.date.birthdate().toISOString().substring(0, 10),
-    street: faker.address.buildingNumber(),
-    city: faker.address.cityName(),
-    state: faker.address.country(),
-    zipCode: faker.address.zipCode('#####'),
-  })
-}
-
 function EmployeeList() {
-  const storedUsers = JSON.parse(localStorage.getItem('employees')) || []
+  const store = useStore()
+  const users = useSelector(selectUsersData)
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
-  const users = storedUsers.concat(fakeUsers)
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName &&
-      user.lastName &&
-      user.firstName
-        .concat(' ', user.lastName)
-        .toLowerCase()
-        .includes(filterText.toLowerCase())
-  )
+  const filteredUsers =
+    filterText === ''
+      ? users
+      : users.filter(
+          (user) =>
+            user.firstName &&
+            user.lastName &&
+            user.firstName
+              .concat(' ', user.lastName)
+              .toLowerCase()
+              .includes(filterText.toLowerCase())
+        )
   const onFilter = (txt) => setFilterText(txt)
 
   useEffect(() => {
     document.title = 'Employee list'
-  }, [])
+    getUsers(store)
+  }, [store])
 
   const subHeaderComponentMemo = useMemo(() => {
     const handleClear = () => {
@@ -88,7 +77,7 @@ function EmployeeList() {
         pagination
         striped
         columns={columns}
-        data={filterText ? filteredUsers : users}
+        data={filteredUsers}
         subHeader
         subHeaderComponent={subHeaderComponentMemo}
       />
