@@ -38,7 +38,6 @@ for (let i = 0; i < 100; i++) {
 function EmployeeList() {
   const storedUsers = JSON.parse(localStorage.getItem('employees')) || []
   const users = storedUsers.concat(fakeUsers)
-  console.log(storedUsers)
 
   useEffect(() => {
     document.title = 'Employee list'
