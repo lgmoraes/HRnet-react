@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import styled from 'styled-components'
 import { faker } from '@faker-js/faker'
+import { Input } from 'antd'
 
 import { dataColumns } from '../../utils/data'
 
@@ -11,6 +12,8 @@ const Title = styled.h1`
   justify-content: center;
   display: flex;
 `
+
+const { Search } = Input
 
 const columns = Object.entries(dataColumns).map(([label, id]) => ({
   name: label,
@@ -37,11 +40,44 @@ for (let i = 0; i < 100; i++) {
 
 function EmployeeList() {
   const storedUsers = JSON.parse(localStorage.getItem('employees')) || []
+  const [filterText, setFilterText] = useState('')
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const users = storedUsers.concat(fakeUsers)
+  const filteredUsers = users.filter(
+    (user) =>
+      user.firstName &&
+      user.lastName &&
+      user.firstName
+        .concat(' ', user.lastName)
+        .toLowerCase()
+        .includes(filterText.toLowerCase())
+  )
+  const onFilter = (txt) => setFilterText(txt)
 
   useEffect(() => {
     document.title = 'Employee list'
   }, [])
+
+  const subHeaderComponentMemo = useMemo(() => {
+    const handleClear = () => {
+      if (filterText) {
+        setResetPaginationToggle(!resetPaginationToggle)
+        setFilterText('')
+      }
+    }
+
+    return (
+      <Search
+        style={{
+          width: 220,
+        }}
+        placeholder="Filter results"
+        enterButton="X"
+        onInput={(e) => onFilter(e.target.value)}
+        onSearch={handleClear}
+      />
+    )
+  }, [filterText, resetPaginationToggle])
 
   return (
     <main className="employeeList">
@@ -52,7 +88,9 @@ function EmployeeList() {
         pagination
         striped
         columns={columns}
-        data={users}
+        data={filterText ? filteredUsers : users}
+        subHeader
+        subHeaderComponent={subHeaderComponentMemo}
       />
       <Link to="/">Home</Link>
     </main>
